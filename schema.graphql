@@ -1,0 +1,206 @@
+type BondingCurveFractionSet @entity(immutable: true) {
+  id: Bytes!
+  newFraction: BigInt! # uint256
+  oldFraction: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CreationCostSet @entity(immutable: true) {
+  id: Bytes!
+  newAmount: BigInt! # uint256
+  oldAmount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CurveSet @entity(immutable: true) {
+  id: Bytes!
+  newCurve: Bytes! # address
+  oldCurve: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type GaugeFeesSet @entity(immutable: true) {
+  id: Bytes!
+  newBuyFee: BigInt! # uint256
+  oldBuyFee: BigInt! # uint256
+  newSellFee: BigInt! # uint256
+  oldSellFee: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type GaugeImplementationSet @entity(immutable: true) {
+  id: Bytes!
+  newImpl: Bytes! # address
+  oldImpl: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type LpReceiverSet @entity(immutable: true) {
+  id: Bytes!
+  newReceiver: Bytes! # address
+  oldReceiver: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type NewToken @entity(immutable: true) {
+  id: Bytes!
+  creator: Bytes! # address
+  token: Bytes! # address
+  gauge: Bytes! # address
+  curve: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OwnershipTransferred @entity(immutable: true) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type BoosterFractionSet @entity(immutable: true) {
+  id: Bytes!
+  newFraction: BigInt! # uint256
+  oldFraction: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TokenImplementationSet @entity(immutable: true) {
+  id: Bytes!
+  newImpl: Bytes! # address
+  oldImpl: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TreasurySet @entity(immutable: true) {
+  id: Bytes!
+  newTreasury: Bytes! # address
+  oldTreasury: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Approval @entity(immutable: true) {
+  id: Bytes!
+  owner: Bytes! # address
+  spender: Bytes! # address
+  value: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Transfer @entity(immutable: true) {
+  id: Bytes!
+  from: Bytes! # address
+  to: Bytes! # address
+  value: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PoolLaunched @entity(immutable: true) {
+  id: Bytes!
+  token: Token! # address
+  pool: Bytes! # address
+  tokenId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Trade @entity(immutable: true) {
+  id: Bytes!
+  type: String! # "buy"/"sell"
+  gauge: Gauge! # Reference to the Gauge entity
+  token: Token! # Reference to the Token entity
+  recipient: Bytes! # address
+  tokenAmount: BigInt! # uint256
+  ethAmount: BigInt! # uint256
+  priceOpening: BigInt! # uint256
+  priceAvg: BigInt! # uint256
+  priceClosing: BigInt! # uint256
+  usdValue: BigInt! # uint256
+  ethPrice: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Token @entity {
+  id: ID!
+  creator: Bytes! # address
+  factory: AddressStore! # address
+  symbol: String!
+  name: String!
+  ipfsHash: String!
+  website: String!
+  twitter: String!
+  telegram: String!
+  description: String!
+  metadata: String!
+  gauge: Gauge! @derivedFrom(field: "token")
+  pool: Bytes # address
+  launchDetails: PoolLaunched @derivedFrom(field: "token")
+  trades: [Trade!]! @derivedFrom(field: "token")
+  priceDatas: [PriceData!]! @derivedFrom(field: "token")
+  balances: [TokenBalance!]! @derivedFrom(field: "token")
+  lastPrice: BigInt!
+  totalSupply: BigInt!
+  tokenPurchased: BigInt!
+  tokenTarget: BigInt!
+  volume: BigInt!
+  creationTimestamp: BigInt!
+}
+
+type Gauge @entity {
+  id: ID!
+  token: Token!
+  isCompleted: Boolean! # True if a PoolLaunched event has been emitted for this Gauge
+}
+
+type TokenBalance @entity {
+  id: ID! # tokenAddress-holderAddress
+  holder: Bytes! # address
+  token: Token! # address
+  balance: BigInt! # uint256
+}
+
+type PriceData @entity {
+  id: ID!
+  token: Token! # address
+  o: BigInt! # opening price
+  h: BigInt! # high price
+  l: BigInt! # low price
+  c: BigInt! # closing price
+  v: BigInt! # volume
+  su: BigInt! # period start Unix timestamp
+  eu: BigInt! # period end Unix timestamp
+}
+
+type AddressStore @entity {
+  id: ID!
+  tokens: [Token!]! @derivedFrom(field: "factory")
+}

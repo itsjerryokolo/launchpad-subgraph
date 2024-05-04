@@ -1,0 +1,109 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: never
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Launchpad
+    network: base
+    source:
+      address: "0x98a310e92f241afa215869ca94cb5633eec89d23"
+      abi: Launchpad
+      startBlock: 13953638
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - BondingCurveFractionSet
+        - CreationCostSet
+        - CurveSet
+        - GaugeFeesSet
+        - GaugeImplementationSet
+        - LpReceiverSet
+        - NewToken
+        - OwnershipTransferred
+        - BoosterFractionSet
+        - TokenImplementationSet
+        - TreasurySet
+      abis:
+        - name: Launchpad
+          file: ./abis/Launchpad.json
+      eventHandlers:
+        - event: BondingCurveFractionSet(uint256,uint256)
+          handler: handleBondingCurveFractionSet
+        - event: CreationCostSet(uint256,uint256)
+          handler: handleCreationCostSet
+        - event: CurveSet(indexed address,indexed address)
+          handler: handleCurveSet
+        - event: GaugeFeesSet(uint256,uint256,uint256,uint256)
+          handler: handleGaugeFeesSet
+        - event: GaugeImplementationSet(indexed address,indexed address)
+          handler: handleGaugeImplementationSet
+        - event: LpReceiverSet(indexed address,indexed address)
+          handler: handleLpReceiverSet
+        - event: NewToken(indexed address,indexed address,indexed address,address)
+          handler: handleNewToken
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: BoosterFractionSet(uint256,uint256)
+          handler: handleBoosterFractionSet
+        - event: TokenImplementationSet(indexed address,indexed address)
+          handler: handleTokenImplementationSet
+        - event: TreasurySet(indexed address,indexed address)
+          handler: handleTreasurySet
+      file: ./src/launchpad.ts
+templates:
+  - kind: ethereum/contract
+    name: LaunchpadToken
+    network: base
+    source:
+      abi: LaunchpadToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - Transfer
+        - TokenBalance
+      abis:
+        - name: LaunchpadToken
+          file: ./abis/LaunchpadToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/launchpad-token.ts
+  - kind: ethereum/contract
+    name: Gauge
+    network: base
+    source:
+      abi: Gauge
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Buy
+        - PoolLaunched
+        - Sell
+      abis:
+        - name: Gauge
+          file: ./abis/Gauge.json
+        - name: LaunchpadToken
+          file: ./abis/LaunchpadToken.json
+        - name: ChainlinkAggregator
+          file: ./abis/ChainlinkAggregator.json
+      eventHandlers:
+        - event: Buy(indexed address,uint256,uint256,uint256)
+          handler: handleBuy
+        - event: PoolLaunched(indexed address,indexed address,uint256)
+          handler: handlePoolLaunched
+        - event: Sell(indexed address,uint256,uint256,uint256)
+          handler: handleSell
+      blockHandlers:
+        - handler: handleBlock
+      file: ./src/gauge.ts

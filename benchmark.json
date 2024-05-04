@@ -1,0 +1,22 @@
+{
+  "TOKENS_QUERY": {
+    "times": [
+      2431,
+      826,
+      1757,
+      1036,
+      1421
+    ],
+    "averageTime": 1494.2
+  },
+  "PRICE_DATA_QUERY": {
+    "times": [
+      946,
+      729,
+      1091,
+      1186,
+      589
+    ],
+    "averageTime": 908.2
+  }
+}
